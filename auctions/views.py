@@ -17,6 +17,7 @@ def listing(request, id):
 # Watchlist view - show the user's watchlist
 def watchlist_view(request):
     current_user = request.user
+    watchlist_listings = request.user.watchlist_items.all()
     # Get the listings in the user's watchlist
     watchlist_listings = Listing.objects.filter(watchlist=current_user)
     return render(request, 'auctions/watchlist.html', {'watchlist_listings': watchlist_listings})
@@ -26,7 +27,16 @@ def addWatchlist(request, id):
     listingData = Listing.objects.get(pk=id)
     currentUser = request.user
     listingData.watchlist.add(currentUser)
-    return HttpResponseRedirect(reverse("listing", args=(id,)))
+    return HttpResponseRedirect(reverse("listing", args=(id, )))
+
+
+def displayWatchList(request):
+    currentUser = request.user
+    listings = currentUser.listingWatchlist.all()
+    return render(request, "action/watchlist.html", {
+        "listings": listings
+    })
+
 
 # Remove a listing from the user's watchlist
 def removeWatchlist(request, id):

@@ -3,7 +3,7 @@
 {% block body %}
     <h2>Watchlist</h2>
     <div class="row mx-3">
-    {% for listing in listings %}        
+    {% for listing in watchlist_listings %}              
             <div class="card" style="width: 18rem;">
                 <img src="{{listing.imageUrl}}" alt="{{listing.title}}">
                 <div class="card-body">
