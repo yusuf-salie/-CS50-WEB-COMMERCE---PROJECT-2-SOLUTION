@@ -1,26 +1,31 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <form action=" {% url 'displayCategory' %} " method=POST class="my-3">
+    <form action="{% url 'displayCategory' %}" method="POST" class="my-3">
         {% csrf_token %}
-    <label for=category>Choose a category:</label>
-        <select name="category" id="category">
-            {% for cat in categories %}
-                <option value="{{ cat }}">{{ cat }}</option>
-            {% endfor %}
-        </select>
+        <div class="mb-3">
+            <label for="category" class="form-label">Choose a category:</label>
+            <select name="category" id="category" class="form-select">
+                {% for cat in categories %}
+                    <option value="{{ cat }}">{{ cat }}</option>
+                {% endfor %}
+            </select>
+        </div>
         <button type="submit" class="btn btn-warning">Select</button>
     </form>
+
     <div class="row mx-3">
-    {% for listing in listings %}        
-            <div class="card" style="width: 18rem;">
-                <img src="{{listing.imageUrl}}" alt="{{listing.title}}">
-                <div class="card-body">
-                    <h5 class="card-title">{{listing.title}}</h5>
-                    <p class="card-text">{{listing.description}}</p>
-                    <a href="{% url 'listing' id=listing.id %}" class="btn btn-primary">Details</a>
+        {% for listing in listings %}
+            <div class="col-md-4 mb-3">
+                <div class="card" style="width: 18rem;">
+                    <img src="{{ listing.imageUrl }}" alt="{{ listing.title }}" class="card-img-top">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ listing.title }}</h5>
+                        <p class="card-text">{{ listing.description }}</p>
+                        <a href="{% url 'listing' id=listing.id %}" class="btn btn-primary">Details</a>
+                    </div>
                 </div>
-            </div>        
-    {% endfor %}
+            </div>
+        {% endfor %}
     </div>
 {% endblock %}

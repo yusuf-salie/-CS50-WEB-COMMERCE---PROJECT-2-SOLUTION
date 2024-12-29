@@ -1,0 +1,12 @@
+<form action="{% url 'displayCategory' %}" method="POST" class="my-3">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label for="category" class="form-label">Choose a category:</label>
+        <select name="category" id="category" class="form-select">
+            {% for cat in categories %}
+                <option value="{{ cat }}">{{ cat }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <button type="submit" class="btn btn-warning">Select</button>
+</form>
