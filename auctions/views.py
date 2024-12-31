@@ -3,7 +3,7 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
-from .models import Listing, User, Category
+from .models import Listing, User, Category, Listing, Comment
 
 # Listing details view
 def listing(request, id):
@@ -13,6 +13,19 @@ def listing(request, id):
         "listing": listingData,
         "isListingInWatchlist": isListingInWatchlist
     })
+    
+def addComment(request,id):
+    currentUser = request.user
+    listingData = Listing.objects.get(pk=id)
+    message = request.POST('newComment')
+
+    newComment = Comment(
+        author=currentUser,
+        listing=listingData,
+        message=message
+    )
+    
+    return HttpResponseRedirect(reverse("listing", args=(id, )))
 
 # Watchlist view - show the user's watchlist
 def watchlist_view(request):
