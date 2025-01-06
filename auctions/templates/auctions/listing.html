@@ -48,7 +48,11 @@
     <ul class="mt-4 w-100">
         <ul class="list-group">
             {%for comment in allComments%}
-                <li class="list-group-item">{{comment.message}}</li>          
+                <li class="list-group-item">
+                    {{comment.message}}
+                    <br/>
+                <p>Posted by: <strong>{{comment.author}}</strong></p>
+                </li>          
           {% endfor %}
         </ul>
 {% endblock %}
