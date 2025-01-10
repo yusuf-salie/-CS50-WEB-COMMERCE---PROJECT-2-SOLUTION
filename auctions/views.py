@@ -100,10 +100,10 @@ def createListing(request):
         #Who is the user
         currentUser = request.user
         
-        #Get all ccontent about the particular category
+        #Get all content about the particular category
         categoryData = Category.objects.get(categoryName=category)
         #Create a bid object
-        bid = Bid(bid=float(price), user=currentUser)
+        bid = Bid(bid=int(price), user=currentUser)
         bid.save()
         
         # Check if all required fields are provided
