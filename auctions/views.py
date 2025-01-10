@@ -3,7 +3,7 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
-from .models import Listing, User, Category, Listing, Comment
+from .models import Listing, User, Category, Listing, Comment, Bid
 
 # Listing details view
 def listing(request, id):
@@ -97,7 +97,15 @@ def createListing(request):
         price = request.POST["price"]
         category = request.POST["category"]
         currentUser = request.user
-
+        #Who is the user
+        currentUser = request.user
+        
+        #Get all ccontent about the particular category
+        categoryData = Category.objects.get(categoryName=category)
+        #Create a bid object
+        bid = Bid(bid=float(price), user=currentUser)
+        bid.save()
+        
         # Check if all required fields are provided
         if not all([title, description, imageurl, price, category]):
             return render(request, "auctions/create.html", {
@@ -122,7 +130,7 @@ def createListing(request):
             title=title,
             description=description,
             imageUrl=imageurl,
-            price=price,
+            price=bid,
             category=categoryData,
             owner=currentUser
         )
