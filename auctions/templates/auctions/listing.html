@@ -1,10 +1,7 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-
-
-<div class="container">
-    {% if message %}
+    <div class="container">
         {% if updated %}
         <div class="alert alert-success" role="alert">
             {{ message }}
@@ -12,10 +9,9 @@
         {% else %}
         <div class="alert alert-danger" role="alert">
             {{ message }}
-          </div>        
+        </div>        
         {% endif %}
-    {% endif %}
-</div>
+    </div>
 
 <div class="row mx-3">
     {% if user.is_authenticated %}

@@ -16,7 +16,6 @@ def listing(request, id):
         "allComments": allComments
     })
 
-
 def addBid(request, id):
     newBid = request.POST['newBid']
     listingData = get_object_or_404(Listing, pk=id)
@@ -33,12 +32,11 @@ def addBid(request, id):
     else:
         return render(request, "auctions/listing.html", {
             "listing": listingData,
-            "message": "Bid update unsuccessfull",
+            "message": "Bid update unsuccessful",
             "update": False
         })
 
-
-def addComment(request,id):
+def addComment(request, id):
     currentUser = request.user
     listingData = Listing.objects.get(pk=id)
     message = request.POST['newComment']
@@ -67,14 +65,12 @@ def addWatchlist(request, id):
     listingData.watchlist.add(currentUser)
     return HttpResponseRedirect(reverse("listing", args=(id, )))
 
-
 def displayWatchList(request):
     currentUser = request.user
     listings = currentUser.listingWatchlist.all()
-    return render(request, "action/watchlist.html", {
+    return render(request, "auctions/watchlist.html", {
         "listings": listings
     })
-
 
 # Remove a listing from the user's watchlist
 def removeWatchlist(request, id):
@@ -101,6 +97,12 @@ def displayCategory(request):
         allCategories = Category.objects.all()
         return render(request, "auctions/display_category.html", {
             "listings": activeListing,
+            "categories": allCategories,
+            "selected_category": categoryFromForm
+        })
+    else:
+        allCategories = Category.objects.all()
+        return render(request, "auctions/display_category.html", {
             "categories": allCategories
         })
 
@@ -119,12 +121,11 @@ def createListing(request):
         price = request.POST["price"]
         category = request.POST["category"]
         currentUser = request.user
-        #Who is the user
-        currentUser = request.user
         
-        #Get all content about the particular category
+        # Get all content about the particular category
         categoryData = Category.objects.get(categoryName=category)
-        #Create a bid object
+        
+        # Create a bid object
         bid = Bid(bid=int(price), user=currentUser)
         bid.save()
         
