@@ -3,7 +3,7 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
-from .models import Listing, User, Category, Listing, Comment, Bid
+from .models import Listing, User, Category, Comment, Bid
 
 # Listing details view
 def listing(request, id):
@@ -15,7 +15,29 @@ def listing(request, id):
         "isListingInWatchlist": isListingInWatchlist,
         "allComments": allComments
     })
-    
+
+
+def addBid(request, id):
+    newBid = request.POST['newBid']
+    listingData = get_object_or_404(Listing, pk=id)
+    if int(newBid) > listingData.price.bid:
+        updateBid = Bid(user=request.user, bid=int(newBid))
+        updateBid.save()
+        listingData.price = updateBid
+        listingData.save()
+        return render(request, "auctions/listing.html", {
+            "listing": listingData,
+            "message": "Bid was updated successfully",
+            "update": True
+        })
+    else:
+        return render(request, "auctions/listing.html", {
+            "listing": listingData,
+            "message": "Bid update unsuccessfull",
+            "update": False
+        })
+
+
 def addComment(request,id):
     currentUser = request.user
     listingData = Listing.objects.get(pk=id)

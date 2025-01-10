@@ -2,6 +2,21 @@
 
 {% block body %}
 
+
+<div class="container">
+    {% if message %}
+        {% if updated %}
+        <div class="alert alert-success" role="alert">
+            {{ message }}
+        </div>
+        {% else %}
+        <div class="alert alert-danger" role="alert">
+            {{ message }}
+          </div>        
+        {% endif %}
+    {% endif %}
+</div>
+
 <div class="row mx-3">
     {% if user.is_authenticated %}
         {% if isListingInWatchlist %}
@@ -24,7 +39,27 @@
 </div>
 <p>Owner: {{ listing.owner }}</p>
 <p>{{ listing.description }}</p>
-<h4>${{ listing.price }}</h4>
+<h6>Initial Price: ${{ listing.price.bid }}</h6>
+{% if user.is_authenticated  %}
+<form action="{% url 'addBid' id=listing.id %}" method="POST" class="w-100">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="newBid">Add Bid</label>
+        <input 
+            type="number"
+            min = "0"
+            name="newBid" 
+            class="form-control" 
+            id="newBid" 
+            placeholder="Add New Bid"
+        >
+        <br/>
+        <button type="submit" class="btn btn-primary">Submit Bid</button>
+    </div>            
+</form>
+{% endif %}
+<br/>
+<p> {{ message }} </p>
 
     <h2 class="mb-3">Comments</h2> 
     <br/>
@@ -40,6 +75,7 @@
                     id="newComment" 
                     placeholder="Add your comment"
                 >
+                <br/>
                 <button type="submit" class="btn btn-primary mt-2">Submit Comment</button>
             </div>            
         </form>
