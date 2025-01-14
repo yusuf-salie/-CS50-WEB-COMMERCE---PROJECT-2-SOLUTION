@@ -4,7 +4,6 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from .models import Listing, User, Category, Comment, Bid
-
 # Listing details view
 def listing(request, id):
     listingData = Listing.objects.get(pk=id)
@@ -17,24 +16,36 @@ def listing(request, id):
     })
 
 def addBid(request, id):
-    newBid = request.POST['newBid']
     listingData = get_object_or_404(Listing, pk=id)
-    if int(newBid) > listingData.price.bid:
-        updateBid = Bid(user=request.user, bid=int(newBid))
+    newBid = int(request.POST['newBid'])  # Get the new bid value as an integer
+
+    # Make sure you are comparing the bid value correctly
+    if newBid > listingData.price.bid:  # Compare with the current bid value
+        updateBid = Bid(user=request.user, bid=newBid)  # Create a new bid with the user and the new bid value
         updateBid.save()
-        listingData.price = updateBid
+
+        listingData.price = updateBid  # Update the listing's price to the new bid
         listingData.save()
+
+        isListingInWatchlist = request.user in listingData.watchlist.all()
+
+        # Pass context to the template
         return render(request, "auctions/listing.html", {
             "listing": listingData,
             "message": "Bid was updated successfully",
-            "update": True
+            "update": True,
+            "isListingInWatchlist": isListingInWatchlist,
+            "allComments": Comment.objects.filter(listing=listingData),
         })
     else:
+        # If the bid is not higher, show the error message
         return render(request, "auctions/listing.html", {
             "listing": listingData,
-            "message": "Bid update unsuccessful",
-            "update": False
+            "message": "Bid update unsuccessful. New bid must be higher than the current bid.",
+            "update": False,
+            "allComments": Comment.objects.filter(listing=listingData),
         })
+
 
 def addComment(request, id):
     currentUser = request.user
