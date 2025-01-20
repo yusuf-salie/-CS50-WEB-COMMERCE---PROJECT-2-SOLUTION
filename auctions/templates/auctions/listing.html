@@ -17,7 +17,13 @@
 </div>
 
 <div class="row mx-3">
-    {% if user.is_authenticated %}
+    {% if user.is_authenticated and listing.isActive %}
+        {% if isOwner   %}
+            <form action="{% url 'closeAuction' id=listing.id %}" method="POST" class="row mx-3">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">closeAuction</button>
+            </form>
+        {% endif %}
         {% if isListingInWatchlist %}
             <form action="{% url 'removeWatchlist' id=listing.id %}" method="POST">
                 {% csrf_token %}
@@ -57,6 +63,19 @@
     </div>            
 </form>
 {% endif %}
+
+<!-- listing.html -->
+{% if listing.is_open %}
+    <form method="POST" action="{% url 'addBid' listing.id %}">
+        {% csrf_token %}
+        <input type="number" name="newBid" placeholder="Enter your bid" required>
+        <button type="submit">Submit Bid</button>
+    </form>
+{% else %}
+    <input type="number" name="newBid" placeholder="Bid closed, no new bids allowed" disabled>
+    <button type="submit" disabled>Submit Bid</button>
+{% endif %}
+
 <br/>
 <p> {{ message }} </p>
 
