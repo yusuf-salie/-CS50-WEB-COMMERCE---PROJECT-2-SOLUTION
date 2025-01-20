@@ -18,10 +18,10 @@
 
 <div class="row mx-3">
     {% if user.is_authenticated and listing.isActive %}
-        {% if isOwner   %}
+        {% if isOwner %}
             <form action="{% url 'closeAuction' id=listing.id %}" method="POST" class="row mx-3">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-danger">closeAuction</button>
+                <button type="submit" class="btn btn-danger">Close Auction</button>
             </form>
         {% endif %}
         {% if isListingInWatchlist %}
@@ -45,68 +45,71 @@
 <p>Owner: {{ listing.owner }}</p>
 <p>{{ listing.description }}</p>
 <h6>Initial Price: ${{ listing.price.bid }}</h6>
-{% if user.is_authenticated  %}
-<form action="{% url 'addBid' id=listing.id %}" method="POST" class="w-100">
-    {% csrf_token %}
-    <div class="form-group">
-        <label for="newBid">Add Bid</label>
-        <input 
-            type="number"
-            min = "0"
-            name="newBid" 
-            class="form-control" 
-            id="newBid" 
-            placeholder="Add New Bid"
-        >
-        <br/>
-        <button type="submit" class="btn btn-primary">Submit Bid</button>
-    </div>            
-</form>
-{% endif %}
-
-<!-- listing.html -->
-{% if listing.is_open %}
-    <form method="POST" action="{% url 'addBid' listing.id %}">
+{% if user.is_authenticated %}
+    <form action="{% url 'addBid' id=listing.id %}" method="POST" class="w-100">
         {% csrf_token %}
-        <input type="number" name="newBid" placeholder="Enter your bid" required>
-        <button type="submit">Submit Bid</button>
+        <div class="form-group">
+            <label for="newBid">Add Bid</label>
+            {% if listing.is_open %}
+                <input 
+                    type="number"
+                    min="0"
+                    name="newBid"
+                    class="form-control"
+                    id="newBid"
+                    placeholder="Add New Bid"
+                    required
+                >
+                <br/>
+                <button type="submit" class="btn btn-primary">Submit Bid</button>
+            {% else %}
+                <input 
+                    type="number"
+                    name="newBid"
+                    class="form-control"
+                    placeholder="Bid closed, no new bids allowed"
+                    disabled
+                >
+                <br/>
+                <button type="submit" class="btn btn-primary" disabled>Submit Bid</button>
+            {% endif %}
+        </div>            
     </form>
-{% else %}
-    <input type="number" name="newBid" placeholder="Bid closed, no new bids allowed" disabled>
-    <button type="submit" disabled>Submit Bid</button>
 {% endif %}
 
 <br/>
-<p> {{ message }} </p>
+<p>{{ message }}</p>
 
-    <h2 class="mb-3">Comments</h2> 
-    <br/>
-    {% if user.is_authenticated %}
-        <form action="{% url 'addComment' id=listing.id %}" method="POST" class="w-100">
-            {% csrf_token %}
-            <div class="form-group">
-                <label for="newComment">Add Comment</label>
-                <input 
-                    type="text" 
-                    name="newComment" 
-                    class="form-control" 
-                    id="newComment" 
-                    placeholder="Add your comment"
-                >
+<h2 class="mb-3">Comments</h2> 
+<br/>
+{% if user.is_authenticated %}
+    <form action="{% url 'addComment' id=listing.id %}" method="POST" class="w-100">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="newComment">Add Comment</label>
+            <input 
+                type="text"
+                name="newComment"
+                class="form-control"
+                id="newComment"
+                placeholder="Add your comment"
+            >
+            <br/>
+            <button type="submit" class="btn btn-primary mt-2">Submit Comment</button>
+        </div>            
+    </form>
+{% endif %}
+<br/>
+<ul class="mt-4 w-100">
+    <ul class="list-group">
+        {% for comment in allComments %}
+            <li class="list-group-item">
+                {{ comment.message }}
                 <br/>
-                <button type="submit" class="btn btn-primary mt-2">Submit Comment</button>
-            </div>            
-        </form>
-    {% endif %}
-    <br/>
-    <ul class="mt-4 w-100">
-        <ul class="list-group">
-            {%for comment in allComments%}
-                <li class="list-group-item">
-                    {{comment.message}}
-                    <br/>
-                <p>Posted by: <strong>{{comment.author}}</strong></p>
-                </li>          
-          {% endfor %}
-        </ul>
+                <p>Posted by: <strong>{{ comment.author }}</strong></p>
+            </li>
+        {% endfor %}
+    </ul>
+</ul>
+
 {% endblock %}
